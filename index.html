@@ -1425,10 +1425,10 @@ function openDetail(id) {
 
 // 너를 위한 글자 좌석 구성: 행별 (left 석수, right 석수, left 시작번, right 시작번)
 const SEAT_ROWS = {
-  A:{ left:9,  right:10, lStart:1, rStart:10 },  // A열: 1-9 / 10-19 (통로)
-  B:{ left:9,  right:10, lStart:1, rStart:10 },  // B열: 1-9 / 10-19 (통로)
-  C:{ left:9,  right:9,  lStart:1, rStart:10 },  // C열: 1-9 / 10-18 (통로, 18석)
-  D:{ left:9,  right:10, lStart:1, rStart:10 },  // D열: 1-9 / 10-19 (통로)
+  A:{ left:19, right:0,  lStart:1, rStart:0  },  // A열: 1-19 (연속)
+  B:{ left:19, right:0,  lStart:1, rStart:0  },  // B열: 1-19 (연속)
+  C:{ left:18, right:0,  lStart:1, rStart:0  },  // C열: 1-18 (연속)
+  D:{ left:19, right:0,  lStart:1, rStart:0  },  // D열: 1-19 (연속)
   E:{ left:7,  right:10, lStart:1, rStart:8  },  // E열: 1-7 / 8-17 (통로)
   F:{ left:7,  right:10, lStart:1, rStart:8  },  // F열: 1-7 / 8-17 (통로)
   G:{ left:7,  right:10, lStart:1, rStart:8  },  // G열: 1-7 / 8-17 (통로)
@@ -1451,22 +1451,28 @@ function buildMiniSeat(zone, _row, num) {
     const cfg = SEAT_ROWS[r];
     const isTargetRow = r === zone;
     html += '<div style="display:flex;gap:2px;align-items:center;">';
-    // left padding
-    for (let i = 0; i < MAX_LEFT - cfg.left; i++) html += '<div style="width:10px;height:10px;visibility:hidden;flex-shrink:0;"></div>';
-    // left seats
-    for (let n = cfg.lStart; n < cfg.lStart + cfg.left; n++) {
-      const hl = isTargetRow && n === parseInt(num);
-      html += `<div style="width:10px;height:10px;border-radius:2px;flex-shrink:0;background:${hl ? 'var(--accent)' : 'var(--bg3)'};border:1px solid ${hl ? 'var(--accent)' : 'var(--border)'};${hl ? 'box-shadow:0 0 4px var(--accent);' : ''}"></div>`;
+    if (cfg.right === 0) {
+      // 연속 행(A-D)
+      for (let n = cfg.lStart; n < cfg.lStart + cfg.left; n++) {
+        const hl = isTargetRow && n === parseInt(num);
+        html += `<div style="width:10px;height:10px;border-radius:2px;flex-shrink:0;background:${hl ? 'var(--accent)' : 'var(--bg3)'};border:1px solid ${hl ? 'var(--accent)' : 'var(--border)'};${hl ? 'box-shadow:0 0 4px var(--accent);' : ''}"></div>`;
+      }
+      html += `<div style="width:18px;font-size:9px;color:${isTargetRow?'var(--accent)':'var(--text3)'};text-align:center;font-weight:${isTargetRow?'700':'400'};flex-shrink:0;">${r}</div>`;
+      for (let i = 0; i < MAX_LEFT + MAX_RIGHT - cfg.left; i++) html += '<div style="width:10px;height:10px;visibility:hidden;flex-shrink:0;"></div>';
+    } else {
+      // 통로 분리 행(E-K)
+      for (let i = 0; i < MAX_LEFT - cfg.left; i++) html += '<div style="width:10px;height:10px;visibility:hidden;flex-shrink:0;"></div>';
+      for (let n = cfg.lStart; n < cfg.lStart + cfg.left; n++) {
+        const hl = isTargetRow && n === parseInt(num);
+        html += `<div style="width:10px;height:10px;border-radius:2px;flex-shrink:0;background:${hl ? 'var(--accent)' : 'var(--bg3)'};border:1px solid ${hl ? 'var(--accent)' : 'var(--border)'};${hl ? 'box-shadow:0 0 4px var(--accent);' : ''}"></div>`;
+      }
+      html += `<div style="width:18px;font-size:9px;color:${isTargetRow?'var(--accent)':'var(--text3)'};text-align:center;font-weight:${isTargetRow?'700':'400'};flex-shrink:0;">${r}</div>`;
+      for (let n = cfg.rStart; n < cfg.rStart + cfg.right; n++) {
+        const hl = isTargetRow && n === parseInt(num);
+        html += `<div style="width:10px;height:10px;border-radius:2px;flex-shrink:0;background:${hl ? 'var(--accent)' : 'var(--bg3)'};border:1px solid ${hl ? 'var(--accent)' : 'var(--border)'};${hl ? 'box-shadow:0 0 4px var(--accent);' : ''}"></div>`;
+      }
+      for (let i = 0; i < MAX_RIGHT - cfg.right; i++) html += '<div style="width:10px;height:10px;visibility:hidden;flex-shrink:0;"></div>';
     }
-    // row label
-    html += `<div style="width:18px;font-size:9px;color:${isTargetRow?'var(--accent)':'var(--text3)'};text-align:center;font-weight:${isTargetRow?'700':'400'};flex-shrink:0;">${r}</div>`;
-    // right seats
-    for (let n = cfg.rStart; n < cfg.rStart + cfg.right; n++) {
-      const hl = isTargetRow && n === parseInt(num);
-      html += `<div style="width:10px;height:10px;border-radius:2px;flex-shrink:0;background:${hl ? 'var(--accent)' : 'var(--bg3)'};border:1px solid ${hl ? 'var(--accent)' : 'var(--border)'};${hl ? 'box-shadow:0 0 4px var(--accent);' : ''}"></div>`;
-    }
-    // right padding
-    for (let i = 0; i < MAX_RIGHT - cfg.right; i++) html += '<div style="width:10px;height:10px;visibility:hidden;flex-shrink:0;"></div>';
     html += '</div>';
   });
   return html + '</div></div>';
@@ -2083,25 +2089,34 @@ function renderHeatmap() {
     }
     const cfg = SEAT_ROWS[r];
     html += `<div style="display:flex;gap:${GAP}px;align-items:center;">`;
-    // left padding (invisible)
-    for (let i = 0; i < MAX_LEFT - cfg.left; i++) {
-      html += `<div class="seat-cell" style="visibility:hidden;width:${C}px;height:${C}px;"></div>`;
-    }
-    // left seats
-    for (let n = cfg.lStart; n < cfg.lStart + cfg.left; n++) {
-      const k = `${r}-${n}`, cnt = seatMap[k]||0, c = cls(cnt);
-      html += `<div class="seat-cell${c?' '+c:''}" style="width:${C}px;height:${C}px;" title="${r}열 ${n}번 ${cnt}회"></div>`;
-    }
-    // row label
-    html += `<div style="width:${LBL}px;text-align:center;font-size:9px;color:var(--text3);font-weight:700;flex-shrink:0;">${r}</div>`;
-    // right seats
-    for (let n = cfg.rStart; n < cfg.rStart + cfg.right; n++) {
-      const k = `${r}-${n}`, cnt = seatMap[k]||0, c = cls(cnt);
-      html += `<div class="seat-cell${c?' '+c:''}" style="width:${C}px;height:${C}px;" title="${r}열 ${n}번 ${cnt}회"></div>`;
-    }
-    // right padding (invisible)
-    for (let i = 0; i < MAX_RIGHT - cfg.right; i++) {
-      html += `<div class="seat-cell" style="visibility:hidden;width:${C}px;height:${C}px;"></div>`;
+    if (cfg.right === 0) {
+      // 연속 행(A-D): 전 좌석 연속 표시, 라벨은 맨 끝
+      for (let n = cfg.lStart; n < cfg.lStart + cfg.left; n++) {
+        const k = `${r}-${n}`, cnt = seatMap[k]||0, c = cls(cnt);
+        html += `<div class="seat-cell${c?' '+c:''}" style="width:${C}px;height:${C}px;" title="${r}열 ${n}번 ${cnt}회"></div>`;
+      }
+      html += `<div style="width:${LBL}px;text-align:center;font-size:9px;color:var(--text3);font-weight:700;flex-shrink:0;">${r}</div>`;
+      // 전체 행 너비(MAX_LEFT+MAX_RIGHT)와 맞추기 위한 우측 패딩
+      for (let i = 0; i < MAX_LEFT + MAX_RIGHT - cfg.left; i++) {
+        html += `<div class="seat-cell" style="visibility:hidden;width:${C}px;height:${C}px;"></div>`;
+      }
+    } else {
+      // 통로 분리 행(E-K): 좌 패딩 + 좌석 + 통로 라벨 + 우석
+      for (let i = 0; i < MAX_LEFT - cfg.left; i++) {
+        html += `<div class="seat-cell" style="visibility:hidden;width:${C}px;height:${C}px;"></div>`;
+      }
+      for (let n = cfg.lStart; n < cfg.lStart + cfg.left; n++) {
+        const k = `${r}-${n}`, cnt = seatMap[k]||0, c = cls(cnt);
+        html += `<div class="seat-cell${c?' '+c:''}" style="width:${C}px;height:${C}px;" title="${r}열 ${n}번 ${cnt}회"></div>`;
+      }
+      html += `<div style="width:${LBL}px;text-align:center;font-size:9px;color:var(--text3);font-weight:700;flex-shrink:0;">${r}</div>`;
+      for (let n = cfg.rStart; n < cfg.rStart + cfg.right; n++) {
+        const k = `${r}-${n}`, cnt = seatMap[k]||0, c = cls(cnt);
+        html += `<div class="seat-cell${c?' '+c:''}" style="width:${C}px;height:${C}px;" title="${r}열 ${n}번 ${cnt}회"></div>`;
+      }
+      for (let i = 0; i < MAX_RIGHT - cfg.right; i++) {
+        html += `<div class="seat-cell" style="visibility:hidden;width:${C}px;height:${C}px;"></div>`;
+      }
     }
     html += '</div>';
   });
