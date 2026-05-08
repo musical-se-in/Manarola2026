@@ -1425,10 +1425,10 @@ function openDetail(id) {
 
 // 너를 위한 글자 좌석 구성: 행별 (left 석수, right 석수, left 시작번, right 시작번)
 const SEAT_ROWS = {
-  A:{ left:19, right:0,  lStart:1, rStart:0  },  // A열: 1-19 (연속, left만)
-  B:{ left:19, right:0,  lStart:1, rStart:0  },  // B열: 1-19 (연속)
-  C:{ left:18, right:0,  lStart:1, rStart:0  },  // C열: 1-18 (연속)
-  D:{ left:19, right:0,  lStart:1, rStart:0  },  // D열: 1-19 (연속)
+  A:{ left:9,  right:10, lStart:1, rStart:10 },  // A열: 1-9 / 10-19 (통로)
+  B:{ left:9,  right:10, lStart:1, rStart:10 },  // B열: 1-9 / 10-19 (통로)
+  C:{ left:9,  right:9,  lStart:1, rStart:10 },  // C열: 1-9 / 10-18 (통로, 18석)
+  D:{ left:9,  right:10, lStart:1, rStart:10 },  // D열: 1-9 / 10-19 (통로)
   E:{ left:7,  right:10, lStart:1, rStart:8  },  // E열: 1-7 / 8-17 (통로)
   F:{ left:7,  right:10, lStart:1, rStart:8  },  // F열: 1-7 / 8-17 (통로)
   G:{ left:7,  right:10, lStart:1, rStart:8  },  // G열: 1-7 / 8-17 (통로)
@@ -1437,7 +1437,7 @@ const SEAT_ROWS = {
   J:{ left:9,  right:10, lStart:1, rStart:10 },  // J열: 1-9 / 10-19 (통로)
   K:{ left:9,  right:10, lStart:1, rStart:10 },  // K열: 1-9 / 10-19 (통로)
 };
-const MAX_LEFT  = 19;
+const MAX_LEFT  = 9;
 const MAX_RIGHT = 10;
 
 function buildMiniSeat(zone, _row, num) {
